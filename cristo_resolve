@@ -1,0 +1,47 @@
+#!/bin/bash
+# La estructura de este script fue gracias a:
+# https://www.diolinux.com.br/2019/02/codecs-certos-no-davinci-resolve.html
+# Modificando las variables y el preset de ffmpe usando 
+# DNxHD / DNxHR
+
+# A script to transcode 
+# dnxhd, dnxhr_444, dnxhr_hqx, dnxhr_hq, dnxhr_sq, dnxhr_lb
+
+# The -profile:v # is for ProRes quality
+# dnxhr_lb - Low Bandwidth. 8-bit 4:2:2 (yuv422p).
+# dnxhr_sq - Standard Quality. 8-bit 4:2:2 (yuv422p).
+# dnxhr_hq - High Quality. 8-bit 4:2:2 (yuv422p).
+# dnxhr_hqx - High Quality. 10-bit 4:2:2 (yuv422p10le).
+# dnxhr_444 - Finishing Quality. 10-bit 4:4:4 (yuv444p10le).
+
+# cambiar .MOV por su extención... mp4,avi,mts..
+# si van a usar dnxhr_hqx o dnxhr_444 modificar en " -pix_fmt yuv444p10le " sin comillas
+
+# ffmpeg -i $input  -c:v dnxhd -r 59.94 -pix_fmt yuv422p -vf scale=1920:1080 -b:v 36M -c:a pcm_s16le $outpu
+# ffmpeg -i $input  -c:v dnxhd -r 59.94 -pix_fmt yuv422p -vf scale=1280:720 -b:v 60M -c:a pcm_s16le $outpu
+
+#####################################################################################################
+
+CODEC_ORIGINAL="*.MOV"		#extensión de tus videos, cambiar la extesión ${f%.MOV}
+CODEC_DAVINCI=".mov"		#Codec para DavinciResolve Linux
+DESTINO="videos_davinci"	#Destino de archivos
+PRESET_FFMPEG="-c:v dnxhd  -profile:v dnxhr_lb -pix_fmt yuv422p -c:a pcm_s16le" #Preset de FFmpeg
+
+mkdir $DESTINO
+
+for f in $CODEC_ORIGINAL; do ffmpeg -i "$f" $PRESET_FFMPEG "$DESTINO/${f%.MOV}$CODEC_DAVINCI"; done
+
+exit
+
+#####################################################################################################
+
+# 2160p (4K) - 3840 x 2160 pixeles
+# 1440p (2K) - 2560 x 1440 pixeles
+# 1080p (HD) - 1920 x 1080 pixeles
+# 720p (HD) - 1280 x 720 pixeles
+# 480p - 854 x 480 pixeles
+# 360p - 640 x 360 pixeles
+# 240p - 426 x 240 pixeles
+# 144p – 256 x 144 pixeles
+
+
